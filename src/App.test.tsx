@@ -1,4 +1,10 @@
 import axios from "axios";
+import {
+  render,
+  screen,
+  waitFor,
+  waitForElementToBeRemoved,
+} from "@testing-library/react";
 import App from "./App";
 
 jest.mock("axios");
@@ -17,13 +23,48 @@ const fakeUsers = [
 ];
 
 describe("App", () => {
-  describe("Teste assincrônico", () => {
-    test("Renderizando componente", async () => {});
+  describe("Quando o carregamento terminar", () => {
+    test("Não deve mostrar o carregamento", async () => {
+      axios.get.mockResolvedValueOnce({ data: fakeUsers });
 
-    test("Testando se o Carregando foi exibido", async () => {});
+      render(<App />);
 
-    test("Exibir o @ do usuário", async () => {});
+      await waitForElementToBeRemoved(
+        screen.getByText("Carregando usuários...")
+      );
+      await waitFor(() => expect(axios.get).toHaveBeenCalledTimes(1));
+    });
 
-    test("Exibir o nome do usuário", async () => {});
+    test("Deve mostrar o título de Usuários", async () => {
+      axios.get.mockResolvedValueOnce({ data: fakeUsers });
+
+      render(<App />);
+
+      await waitForElementToBeRemoved(
+        screen.getByText("Carregando usuários...")
+      );
+
+      expect(await screen.findByText("Usuários:")).toBeInTheDocument();
+    });
+
+    test("Deve mostrar o nome de usuário", async () => {
+      axios.get.mockResolvedValueOnce({ data: fakeUsers });
+
+      render(<App />);
+
+      const userList = await screen.findByText("@stevesantos");
+
+      expect(userList).toBeInTheDocument();
+    });
+
+    test("Ele deve exibir o nome de usuário", async () => {
+      axios.get.mockResolvedValueOnce({ data: fakeUsers });
+
+      render(<App />);
+
+      const userList = await screen.findByText("Steve");
+
+      expect(userList).toBeInTheDocument();
+    });
   });
 });
