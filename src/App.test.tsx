@@ -47,7 +47,7 @@ describe("App", () => {
       expect(await screen.findByText("Usuários:")).toBeInTheDocument();
     });
 
-    test("Deve mostrar o nome de usuário", async () => {
+    test("Exibir o @ do usuário", async () => {
       axios.get.mockResolvedValueOnce({ data: fakeUsers });
 
       render(<App />);
